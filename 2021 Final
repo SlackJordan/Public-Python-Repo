@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+
+import requests
+import json
+import argparse
+from bs4 import BeautifulSoup
+import socket
+
+#==================== Creating an argument parser to allow user input through the command line =========================================================================
+
+parser = argparse.ArgumentParser(description='Please provide an IP address to access the different pages of the final')
+
+parser.add_argument('-i', '--IP', metavar='[a string]', type=str, required=True, help='<!!REQUIRED!!> Enter an IP address')
+
+parser.add_argument('-f', '--Functions', metavar='[an Integer]', type=int, required=True, help=f'This will be the question number in the url.')
+
+args = parser.parse_args()
+
+ipAdd = args.IP
+qNum = args.Functions
+url=(f'http://{ipAdd}/q{qNum}')
+
+
+print('Name: Jordan Slack')
+
+print(url)
+
+#===============================      FUNCTION ONE     ==========================================  This takes the html content from the ip address specified and parses the html through Beautiful Soup.   =========================================
+
+
+def get_response(urlVar):
+    response = requests.get(urlVar)
+    soup = BeautifulSoup(response.content,'html.parser')
+    return(soup)
+
+#===============================      FUNCTION TWO     ==================================== There was a secret message in the <h3> value in the html file we had to take that and slice the string so it returned every third letter. ==============================
+
+def parse_string(urlVar):
+    response = requests.get(urlVar)
+    soup = BeautifulSoup(response.content,'html.parser')
+    hElement = soup.select('h3')
+    strVar = hElement[0].getText()
+    hiddenMessage = str(strVar)
+    Message = hiddenMessage[2::3]
+    return(Message)
+
+#===============================     FUNCTION THREE    ==================================== This returned the the server header labeled MATC-HEADER on the ip address that was given on the commandline=========================================
+
+def parse_header(urlVar):
+    response = requests.get(urlVar)
+    header = response.headers['MATC-HEADER']
+    return(header)
+
+#==============================      FUNCTION FOUR     =================================== This grabbed JSON data from the server and searched for which author made 1984 ===================================
+
+def parse_json(urlVar):
+    response = requests.get(urlVar)
+    dictResp = json.loads(response.text)
+    counter = 1
+    while counter == 1:
+       for key in dictResp:
+           for key2 in dictResp[key]:
+             title = key2.get('title')
+             if title == '1984':
+                author = key2.get('author')
+                counter = counter - 1
+                return(author)
+             else:
+                counter == 1
+
+#============================        FUNCTION FIVE     ==================================  Checked for open ports on our virtual network and sent a message and recieved a hidden message fromt the server. ====================================
+def socket_client(ipVar):
+    varPORTS = range(5000,6000)
+    myTimeout = 2
+    secret = 'secret'
+    for varPORT in varPORTS:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(myTimeout)
+        try:
+           sock.connect((ipVar,varPORT))
+           message = secret.encode()
+           sock.send(message)
+           answer = sock.recv(1024)
+           lastanswer = answer.decode()
+           sock.close()
+           return(lastanswer)
+        except socket.error as e:
+               sock.close()
+
+if qNum == 1:
+   webData = get_response(url)
+   print(f'Answer:{webData}')
+
+elif qNum == 2:
+   webData = parse_string(url)
+   print(f'Answer: {webData}')
+
+elif qNum == 3:
+   webData = parse_header(url)
+   print(f'Answer: {webData}')
+
+elif qNum == 4:
+   webData = parse_json(url)
+   print(f'Answer: {webData}')
+
+elif qNum == 5:
+   webData = socket_client(ipAdd)
+   print(f'Answer: {webData}')
