@@ -6,7 +6,7 @@ from pprint import pprint
 
 
 def send_email(message, to_email):
-    auth = ('sendinyasomeupdatescuh@gmail.com', 'trying this again')
+    auth = ('sendinyasomeupdatescuh@gmail.com', #PASSWORD#)
 
     # Establish a secure session with gmail's outgoing SMTP server using your gmail account
     server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -20,7 +20,7 @@ def send_email(message, to_email):
 now = datetime.now()
 nn = now.strftime("%m/%d/%Y %H:%M:%S")
 
-apiKey = "867830822e581bed5c067307554204bf"
+apiKey = #VulDB API KEY#
 userAgent = 'VulDB API Advanced Python Demo Agent'
 headers = {'User-Agent': userAgent, 'X-VulDB-ApiKey': apiKey}
 url = 'https://vuldb.com/?api'
