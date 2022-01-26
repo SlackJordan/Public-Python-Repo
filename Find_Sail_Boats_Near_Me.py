@@ -40,7 +40,7 @@ html = df.to_html()
 
 
 def send_email(message, to_email):
-    auth = ('sendinyasomeupdatescuh@gmail.com', 'trying this again')
+    auth = ('sendinyasomeupdatescuh@gmail.com', #PASSWORD#)
 
     # Establish a secure session with gmail's outgoing SMTP server using your gmail account
     server = smtplib.SMTP("smtp.gmail.com", 587)
